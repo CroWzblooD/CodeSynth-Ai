@@ -10,8 +10,9 @@ import Typewriter from "typewriter-effect";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { AdjustmentsIcon } from "@heroicons/react/solid";
 
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(env.NEXT_PUBLIC_GEMINI_API_KEY);
+const genAI = env.NEXT_PUBLIC_GEMINI_API_KEY 
+  ? new GoogleGenerativeAI(env.NEXT_PUBLIC_GEMINI_API_KEY)
+  : null;
 
 // type Roles = "user" | "assistant" | "system";
 export default function Chat(props: { code: string }) {
@@ -41,14 +42,14 @@ export default function Chat(props: { code: string }) {
 
         try {
           // Generate content with Gemini
-          const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-          const result = await model.generateContent(context);
-          const response = await result.response;
-          const text = response.text();
+          const model = genAI?.getGenerativeModel({ model: "gemini-pro" });
+          const result = await model?.generateContent(context);
+          const response = await result?.response;
+          const text = response?.text();
 
           setHistory([
             ...history,
-            ["EditorGPT", text],
+            ["EditorGPT", text || ""],
           ]);
         } catch (error) {
           console.error("Error generating response:", error);
@@ -265,17 +266,17 @@ export default function Chat(props: { code: string }) {
               <input
                 type="text"
                 placeholder="Type a message..."
-                className="w-full rounded-lg border border-gray-300 bg-gray-100 py-1 px-4 text-gray-900 duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:border-gray-700 dark:bg-gray-600 dark:text-gray-200"
+                className="w-full rounded-lg border  border-gray-300 bg-gray-100 py-1 px-4 text-gray-900 duration-150 focus:outline-none  focus:ring-2 focus:ring-gpt dark:border-gray-700 dark:bg-gray-600 dark:text-gray-200"
                 value={query}
                 onChange={(e) => handleQuery(e.target.value)}
               />
               <button
                 type="submit"
-                className="ml-2 flex items-center rounded-lg bg-cyan-500 py-1 px-2 text-white duration-150 ease-in-out hover:bg-cyan-600 dark:bg-cyan-500 dark:hover:bg-cyan-600"
+                className="ml-2 flex items-center rounded-lg bg-gptLight py-1 px-2 text-white duration-150 ease-in-out hover:bg-gpt dark:bg-gpt dark:hover:bg-gptDark "
               >
                 <Image
                   src="/images/logo.svg"
-                  className="inline h-6 w-6"
+                  className=" inline h-6 w-6 "
                   height={500}
                   width={500}
                   alt="ChatGPT"
