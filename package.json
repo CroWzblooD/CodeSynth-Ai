@@ -6,8 +6,7 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start",
-    "postinstall": "pnpm install"
+    "start": "next start"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.31.6",
