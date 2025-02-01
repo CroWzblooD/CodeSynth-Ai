@@ -23,9 +23,10 @@ const Navbar = (props: {
   fontInitializer: () => void;
   toggleDrawing: () => void;
 }) => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { systemTheme, theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const isAuthenticated = status === "authenticated";
 
   useEffect(() => {
     setMounted(true);
@@ -69,6 +70,10 @@ const Navbar = (props: {
     }
   };
 
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
   return (
     <nav className="border-b border-cyan-800/30 bg-gray-900/95 backdrop-blur-sm font-general text-gray-100 shadow-lg duration-75">
       <div className="flex flex-row justify-between items-center px-4 py-2">
@@ -89,29 +94,29 @@ const Navbar = (props: {
 
         <div className="flex items-center space-x-1">
           <div className="hidden h-full items-center py-2 px-4 lg:flex">
-            <span className="text-cyan-400/90 font-medium">{session?.user?.name || "Guest"}</span>
-            <div className="relative my-auto ml-3 inline h-8 w-8 rounded-full border-2 border-cyan-500/30 group hover:border-cyan-400 transition-all duration-300">
-              {session?.user.image ? (
-                <Image
-                  src={session?.user.image}
-                  alt="Profile Picture"
-                  className="relative h-full w-full rounded-full"
-                  height={500}
-                  width={500}
-                />
-              ) : (
-                <UserCircleIcon className="relative h-full w-full rounded-full text-cyan-400" />
-              )}
-              <div className="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-gray-900 bg-cyan-400 group-hover:bg-cyan-300 transition-all duration-300"></div>
+            <span className="text-cyan-400/90 font-medium">
+              {isAuthenticated ? session?.user?.name : "Guest"}
+            </span>
+            <div className="relative my-auto ml-3 inline h-8 w-8 rounded-full border-2 border-cyan-500/30">
+              <UserCircleIcon className="relative h-full w-full rounded-full text-cyan-400" />
             </div>
           </div>
 
+          {process.env.NEXTAUTH_URL && (
+            <div className="relative group">
+              <button
+                className="p-2 rounded-lg bg-gray-800/50 hover:bg-cyan-500/10 text-cyan-400 hover:text-cyan-300 transition-all duration-300"
+                onClick={isAuthenticated ? () => void signOut() : () => void signIn()}
+              >
+                {isAuthenticated ? <LogoutIcon className="h-5 w-5" /> : <LoginIcon className="h-5 w-5" />}
+              </button>
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gray-900 text-cyan-400 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                {isAuthenticated ? "Sign Out" : "Sign In"}
+              </div>
+            </div>
+          )}
+
           {[
-            {
-              icon: session ? <LogoutIcon className="h-5 w-5" /> : <LoginIcon className="h-5 w-5" />,
-              onClick: session ? () => void signOut() : () => void signIn(),
-              tooltip: session ? "Sign Out" : "Sign In"
-            },
             {
               icon: patternSelector(),
               onClick: props.patternBG,
