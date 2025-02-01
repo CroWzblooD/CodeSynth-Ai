@@ -91,10 +91,10 @@ export default function ChatGPT({
 
           const response = result.response.text();
           
-          // Extract code blocks
+          // Extract code blocks with type safety
           const codeBlockRegex = /```(?:\w+)?\n([\s\S]*?)```/g;
           const matches = [...(response?.matchAll(codeBlockRegex) ?? [])];
-          const code = matches.length > 0 ? matches[0][1].trim() : undefined;
+          const code = matches.length > 0 ? matches[0]?.[1]?.trim() : undefined;
 
           // Clean response and format it better
           let cleanResponse = response;
@@ -137,7 +137,7 @@ export default function ChatGPT({
       }]);
       
       // Clear the selected code after adding to chat
-      setSelectedCodeForChat && setSelectedCodeForChat(null);
+      setSelectedCodeForChat && setSelectedCodeForChat("");
     }
   }, [selectedCodeForChat]);
 
