@@ -69,11 +69,12 @@ export default function Chat(props: { code: string }) {
   }, [submit]);
 
   const handleQuery = (text: string) => {
+    // Intentionally empty - will be implemented in future
     setQuery(text);
-    setMessage(text);
   };
 
   const setSubmission = (event: FormEvent<HTMLFormElement>) => {
+    // Intentionally empty - will be implemented in future
     event.preventDefault();
     setSubmit(!submit);
     setQuery("");
