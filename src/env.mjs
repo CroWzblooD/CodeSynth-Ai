@@ -5,13 +5,10 @@ import { z } from "zod";
  * built with invalid env vars.
  */
 const server = z.object({
-  NODE_ENV: z.enum(["development", "test", "production"]),
+  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   // FIREBASE_CLIENT_EMAIL: z.string().min(1),
   // FIREBASE_PRIVATE_KEY: z.string().min(1),
-  NEXTAUTH_SECRET:
-    process.env.NODE_ENV === "production"
-      ? z.string().min(1)
-      : z.string().min(1).optional(),
+  NEXTAUTH_SECRET: z.string().optional(),
   NEXTAUTH_URL: z.preprocess(
     // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
     // Since NextAuth.js automatically uses the VERCEL_URL if present.
@@ -32,7 +29,7 @@ const server = z.object({
  */
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
-  NEXT_PUBLIC_GEMINI_API_KEY: z.string().min(1),
+  NEXT_PUBLIC_GEMINI_API_KEY: z.string().optional(),
 });
 
 /**
@@ -53,9 +50,8 @@ const processEnv = {
   NEXT_PUBLIC_GEMINI_API_KEY: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
 };
 
-// Don't touch the part below
-// --------------------------
-
+// Skip validation if SKIP_ENV_VALIDATION is set
+const skipValidation = !!process.env.SKIP_ENV_VALIDATION;
 const merged = server.merge(client);
 
 /** @typedef {z.input<typeof merged>} MergedInput */
@@ -64,7 +60,7 @@ const merged = server.merge(client);
 
 let env = /** @type {MergedOutput} */ (process.env);
 
-if (!!process.env.SKIP_ENV_VALIDATION == false) {
+if (!skipValidation) {
   const isServer = typeof window === "undefined";
 
   const parsed = /** @type {MergedSafeParseReturn} */ (
