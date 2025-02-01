@@ -10,8 +10,10 @@ import Typewriter from "typewriter-effect";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { XIcon } from "@heroicons/react/solid";
 
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(env.NEXT_PUBLIC_GEMINI_API_KEY);
+// Initialize Gemini with null check
+const genAI = env.NEXT_PUBLIC_GEMINI_API_KEY 
+  ? new GoogleGenerativeAI(env.NEXT_PUBLIC_GEMINI_API_KEY)
+  : null;
 
 // type Roles = "user" | "assistant" | "system";
 interface ChatGPTProps {
@@ -71,6 +73,11 @@ export default function ChatGPT({
         }]);
 
         try {
+          // Check if genAI is initialized
+          if (!genAI) {
+            throw new Error("Gemini API key is not configured");
+          }
+
           const model = genAI.getGenerativeModel({ model: "gemini-pro" });
           const result = await model.generateContent({
             contents: [{ role: "user", parts: [{ text: userPrompt }]}],
@@ -110,14 +117,15 @@ export default function ChatGPT({
           console.error("Error:", error);
           setHistory(prev => [...prev, {
             role: "assistant",
-            content: "Sorry, I encountered an error processing your request."
+            content: "Sorry, I encountered an error processing your request. " + 
+                    (error instanceof Error ? error.message : "Unknown error occurred.")
           }]);
         }
       }
     }
     void fetchData();
     setSubmit(false);
-  }, [submit]);
+  }, [submit, message, selectedCode]);
 
   // Handle selected code when it changes
   useEffect(() => {
