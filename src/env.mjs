@@ -6,8 +6,7 @@ import { z } from "zod";
  */
 const server = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  // FIREBASE_CLIENT_EMAIL: z.string().min(1),
-  // FIREBASE_PRIVATE_KEY: z.string().min(1),
+  // Make NextAuth credentials optional
   NEXTAUTH_SECRET: z.string().optional(),
   NEXTAUTH_URL: z.preprocess(
     // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL

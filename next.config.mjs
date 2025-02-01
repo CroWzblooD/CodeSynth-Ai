@@ -6,26 +6,11 @@
  */
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env.mjs"));
 
-/** @type {import("next").NextConfig} */
+/** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
   images: {
-    domains: ["cdn.discordapp.com", "upload.wikimedia.org"],
-
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "avatars.githubusercontent.com",
-        port: "",
-        pathname: "/u/**",
-      },
-      {
-        protocol: "https",
-        hostname: "*.googleusercontent.com",
-        port: "",
-        pathname: "/a/**",
-      },
-    ],
+    domains: ['avatars.githubusercontent.com', 'lh3.googleusercontent.com', 'cdn.discordapp.com'],
   },
   /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you
@@ -38,4 +23,5 @@ const config = {
     defaultLocale: "en",
   },
 };
+
 export default config;

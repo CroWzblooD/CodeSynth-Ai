@@ -1,8 +1,8 @@
 import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
-  type NextAuthOptions,
   type DefaultSession,
+  type NextAuthOptions,
 } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 import GoogleProvider from "next-auth/providers/google";
@@ -38,49 +38,33 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-  callbacks: {
-    // session({ session, user }) {
-    //   if (session.user) {
-    //     session.user.name = user.name;
-    //     // session.user.role = user.role; <-- put other properties on the session here
-    //   }
-    //   return session;
-    // },
-  },
-  // adapter: FireStoreAdapter(firestore),
+  secret: env.NEXTAUTH_SECRET,
   providers: [
-    // Only add Discord provider if credentials exist
-    ...(env.DISCORD_CLIENT_ID && env.DISCORD_CLIENT_SECRET
-      ? [
-          DiscordProvider({
-            clientId: env.DISCORD_CLIENT_ID,
-            clientSecret: env.DISCORD_CLIENT_SECRET,
-          }),
-        ]
-      : []),
-    // Only add Google provider if credentials exist
-    ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
-      ? [
-          GoogleProvider({
-            clientId: env.GOOGLE_CLIENT_ID,
-            clientSecret: env.GOOGLE_CLIENT_SECRET,
-          }),
-        ]
-      : []),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
+    ...(env.DISCORD_CLIENT_ID && env.DISCORD_CLIENT_SECRET ? [
+      DiscordProvider({
+        clientId: env.DISCORD_CLIENT_ID,
+        clientSecret: env.DISCORD_CLIENT_SECRET,
+      })
+    ] : []),
+    ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET ? [
+      GoogleProvider({
+        clientId: env.GOOGLE_CLIENT_ID,
+        clientSecret: env.GOOGLE_CLIENT_SECRET,
+      })
+    ] : []),
   ],
-  theme: {
-    colorScheme: "auto", // "auto" | "dark" | "light"
-    brandColor: "", // Hex color code #33FF5D
-    logo: "/images/logo.svg", // Absolute URL to image
+  pages: {
+    signIn: '/auth/signin',
+    error: '/auth/error',
+  },
+  callbacks: {
+    session: ({ session, user }) => ({
+      ...session,
+      user: {
+        ...session.user,
+        id: user.id,
+      },
+    }),
   },
 };
 
