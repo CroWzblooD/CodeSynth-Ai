@@ -48,9 +48,6 @@ const Home: NextPage = () => {
     if (font === "font-general") {
       setFont("font-satoshi");
     } else if (font === "font-satoshi") {
-      // setFont("font-azeret");
-      setFont("font-clash");
-    } else if (font === "font-azeret") {
       setFont("font-clash");
     } else {
       setFont("font-general");
@@ -86,7 +83,7 @@ const Home: NextPage = () => {
           selectedCodeForChat=""
           setSelectedCodeForChat={() => {}}
         />
-        <div className="min-h-[calc(100vh-3.6rem)] overflow-hidden bg-gradient-to-b  from-gray-100 to-gray-200 duration-150 dark:from-gray-800 dark:to-gray-900 sm:max-h-[calc(100vh-3.6rem)] ">
+        <div className="min-h-[calc(100vh-3.6rem)] overflow-hidden bg-gradient-to-b from-gray-100 to-gray-200 duration-150 dark:from-gray-800 dark:to-gray-900 sm:max-h-[calc(100vh-3.6rem)]">
           <div className={patternStyles()}></div>
           <Editor />
         </div>
