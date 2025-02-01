@@ -4,20 +4,11 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useState, useEffect, type FormEvent } from "react";
 // import { api } from "~/utils/api";
-import { 
-  UserCircleIcon, 
-  TrashIcon, 
-  ChipIcon, 
-  BeakerIcon, 
-  LightningBoltIcon,
-  ShieldCheckIcon,
-  SwitchHorizontalIcon,
-  ChartBarIcon,
-  CubeIcon 
-} from "@heroicons/react/solid";
+import { UserCircleIcon, TrashIcon } from "@heroicons/react/solid";
 import { env } from "../../env.mjs";
 import Typewriter from "typewriter-effect";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { AdjustmentsIcon } from "@heroicons/react/solid";
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(env.NEXT_PUBLIC_GEMINI_API_KEY);
@@ -130,88 +121,61 @@ export default function Chat(props: { code: string }) {
   return (
     <section className="row-span-3 h-full">
       <div className="relative z-10 flex h-full flex-col justify-between overflow-hidden">
-        <div className="relative flex h-full flex-col bg-gray-900/95 backdrop-blur-sm duration-150">
-          <div className="relative z-10 flex items-center border-y border-cyan-500/20 bg-gray-900/90 px-4 py-3 duration-150">
-            <div className="flex items-center space-x-3">
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-lg blur opacity-40 group-hover:opacity-60 transition duration-300"></div>
-                <div className="relative bg-gray-900 rounded-lg p-2">
-                  <BeakerIcon className="h-5 w-5 text-cyan-400" />
-                </div>
-              </div>
-              <p className="flex select-none items-center text-lg font-semibold text-cyan-400/90">
-                Code Analysis
+        <div className="relative flex h-full flex-col bg-gray-200 bg-opacity-40 duration-150 dark:bg-gray-700 dark:bg-opacity-20">
+          <div className="relative z-10 flex items-center border-y border-y-gray-600 bg-gray-100 px-2 py-2 duration-150 dark:bg-gray-800  ">
+            <p className="flex select-none items-center text-lg font-semibold text-gray-800 duration-150 dark:text-white">
+              <AdjustmentsIcon className="mr-2 h-6 w-6 text-gray-600 dark:text-gray-400" />{" "}
+              Use{" "}
+              <span className="mx-[0.38rem] text-gptDarker dark:text-gpt">
+                {" "}
+                EditorGPT{" "}
+              </span>{" "}
+              to Analyze your Code
+            </p>
+            <div className="ml-auto flex items-center">
+              {session?.user.image ? (
+                <Image
+                  src={(session && session.user.image) || ""}
+                  alt="avatar"
+                  className="mr-2 h-8 w-8 rounded-full border-[1.5px] border-gray-900 text-gray-800 duration-150 dark:border-white dark:text-white"
+                  height={500}
+                  width={500}
+                />
+              ) : (
+                <UserCircleIcon className="relative my-auto mr-2 inline h-8 w-8 rounded-full border-[1.5px] border-gray-900 text-gray-800 duration-150 dark:border-white dark:text-white sm:mb-1" />
+              )}
+              <p className="  text-gray-800 duration-150 dark:text-gray-100">
+                {session && "Signed in as "}
+                {session ? session.user.name : "Guest"}
               </p>
-            </div>
-            <div className="ml-auto flex items-center space-x-3">
-              <div className="hidden items-center space-x-2 lg:flex">
-                {session?.user.image ? (
-                  <div className="relative group">
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-full blur opacity-40 group-hover:opacity-60 transition duration-300"></div>
-                    <Image
-                      src={session.user.image}
-                      alt="avatar"
-                      className="relative h-8 w-8 rounded-full"
-                      height={500}
-                      width={500}
-                    />
-                  </div>
-                ) : (
-                  <UserCircleIcon className="h-8 w-8 text-cyan-400" />
-                )}
-                <span className="text-cyan-400/90">
-                  {session ? session.user.name : "Guest"}
-                </span>
-              </div>
               <button
-                className="flex items-center space-x-2 rounded-lg bg-cyan-500/20 px-3 py-2 text-cyan-400 transition-all duration-300 hover:bg-cyan-500/30 hover:text-cyan-300 group"
+                className="ml-4 flex items-center rounded-lg bg-gptLight px-2 py-1 text-gray-900 duration-75 hover:bg-gpt dark:bg-gpt dark:hover:bg-gptDark"
                 onClick={() => setHistory([])}
               >
-                <TrashIcon className="h-5 w-5 group-hover:scale-110 transition-transform duration-300" />
-                <span className="hidden font-medium lg:inline">Clear</span>
+                <TrashIcon className="inline h-6 w-6 lg:mr-1" />
+
+                <span className="hidden font-semibold lg:inline">Clear</span>
               </button>
             </div>
           </div>
 
-          <div className="scrollbar-thin scrollbar-track-gray-900 scrollbar-thumb-cyan-500/20 hover:scrollbar-thumb-cyan-500/30 flex h-[10rem] grow flex-col-reverse overflow-y-scroll bg-gray-900/50 p-4 pb-1 shadow-inner">
-            <div className="relative z-10 flex flex-col">
+          <div className="scrollbar flex h-[10rem] grow flex-col-reverse overflow-y-scroll bg-gray-300 bg-opacity-80 p-4 pb-1 shadow-inner dark:bg-gray-900 dark:bg-opacity-40">
+            <div className=" relative z-10 flex flex-col">
               {history[0] ? (
                 history.map((msg, i) => (
                   <div
                     key={i}
-                    className="mb-3 flex flex-col rounded-lg bg-gray-900/90 border border-cyan-500/20 p-4 duration-150 hover:border-cyan-500/30 transition-all"
+                    className="mb-3 flex flex-col rounded-lg bg-white p-2 px-4 duration-150  dark:bg-gray-800 "
                   >
-                    <div className="flex items-center space-x-3">
-                      {msg[0] === "EditorGPT" ? (
-                        <div className="relative group">
-                          <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-full blur opacity-40 group-hover:opacity-60 transition duration-300"></div>
-                          <div className="relative bg-gray-900 rounded-full p-1">
-                            <ChipIcon className="h-6 w-6 text-cyan-400" />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="relative group">
-                          <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-full blur opacity-40 group-hover:opacity-60 transition duration-300"></div>
-                          {msg[0] === "Guest" ? (
-                            <UserCircleIcon className="relative h-6 w-6 text-cyan-400" />
-                          ) : (
-                            <Image
-                              src={session?.user.image || ""}
-                              alt="avatar"
-                              className="relative h-6 w-6 rounded-full"
-                              height={500}
-                              width={500}
-                            />
-                          )}
-                        </div>
-                      )}
-                      <p className="font-medium text-cyan-400/90">
+                    <div className="flex items-center">
+                      {chatSelector(msg[0] || "")}
+                      <p className="text-sm font-semibold text-gray-700 duration-150 dark:text-gray-200">
                         {msg[0]}:
                       </p>
                     </div>
 
-                    <div className="mt-2 text-sm text-gray-300/90">
-                      {msg[0] === "EditorGPT" ? (
+                    <div className="mt-2 text-sm text-gray-700 dark:text-gray-300">
+                      {msg[0] == "EditorGPT" || msg[0] == "gpt-4" ? (
                         <Typewriter
                           options={{
                             loop: false,
@@ -231,47 +195,91 @@ export default function Chat(props: { code: string }) {
                 ))
               ) : (
                 <div className="grid h-full grid-cols-3 gap-3 pb-3">
-                  {[
-                    { text: "What does my code do?", icon: <CubeIcon className="h-5 w-5" /> },
-                    { text: "How can my code be improved?", icon: <LightningBoltIcon className="h-5 w-5" /> },
-                    { text: "How efficient is my code?", icon: <BeakerIcon className="h-5 w-5" /> },
-                    { text: "Security vulnerabilities?", icon: <ShieldCheckIcon className="h-5 w-5" /> },
-                    { text: "Alternative approaches?", icon: <SwitchHorizontalIcon className="h-5 w-5" /> },
-                    { text: "Code quality analysis?", icon: <ChartBarIcon className="h-5 w-5" /> }
-                  ].map((item, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setButtonSubmission(item.text)}
-                      className="flex flex-col items-center space-y-2 rounded-lg bg-gray-900/70 p-4 text-cyan-400 transition-all duration-300 hover:bg-cyan-500/20 hover:text-cyan-300 group border border-cyan-500/20 hover:border-cyan-500/30"
-                    >
-                      <div className="group-hover:scale-110 transition-transform duration-300">
-                        {item.icon}
-                      </div>
-                      <span className="text-sm text-center">{item.text}</span>
-                    </button>
-                  ))}
+                  <button
+                    onClick={() => setButtonSubmission("What does my code do?")}
+                    className="rounded-lg bg-gray-100 p-2 duration-150 hover:bg-gray-50 dark:bg-gray-800 hover:dark:bg-gray-900"
+                  >
+                    What does my code do?
+                  </button>
+                  <button
+                    onClick={() =>
+                      setButtonSubmission(
+                        "How can my code be improved or optimized?"
+                      )
+                    }
+                    className="rounded-lg bg-gray-100 p-2 duration-150 hover:bg-gray-50 dark:bg-gray-800 hover:dark:bg-gray-900"
+                  >
+                    How can my code be improved or optimized?
+                  </button>
+                  <button
+                    onClick={() =>
+                      setButtonSubmission(
+                        "How efficient or scalable is my code?"
+                      )
+                    }
+                    className="rounded-lg bg-gray-100 p-2 duration-150 hover:bg-gray-50 dark:bg-gray-800 hover:dark:bg-gray-900"
+                  >
+                    How efficient or scalable is my code?
+                  </button>
+                  <button
+                    onClick={() =>
+                      setButtonSubmission(
+                        "What potential security vulnerabilities might exist in my code? "
+                      )
+                    }
+                    className="rounded-lg bg-gray-100 p-2 duration-150 hover:bg-gray-50 dark:bg-gray-800 hover:dark:bg-gray-900"
+                  >
+                    What potential security vulnerabilities might exist in my
+                    code?
+                  </button>
+                  <button
+                    onClick={() =>
+                      setButtonSubmission(
+                        "What are some alternative ways to achieve the same functionality as my code? "
+                      )
+                    }
+                    className="rounded-lg bg-gray-100 p-2 duration-150 hover:bg-gray-50 dark:bg-gray-800 hover:dark:bg-gray-900"
+                  >
+                    What are some alternative ways to achieve the same
+                    functionality as my code?
+                  </button>
+                  <button
+                    onClick={() =>
+                      setButtonSubmission(
+                        "What is the overall complexity and quality of my code? "
+                      )
+                    }
+                    className="rounded-lg bg-gray-100 p-2 duration-150 hover:bg-gray-50 dark:bg-gray-800 hover:dark:bg-gray-900"
+                  >
+                    What is the overall complexity and quality of my code?
+                  </button>
                 </div>
               )}
             </div>
           </div>
-
-          <div className="relative z-10 border-t border-cyan-500/20 bg-gray-900/90 p-4">
+          <div className="relative z-10 border-t border-gray-600 bg-gray-50 p-3 duration-150 dark:bg-gray-800">
             <form
               onSubmit={(e) => setSubmission(e)}
-              className="flex items-center space-x-2"
+              className="flex items-center"
             >
               <input
                 type="text"
                 placeholder="Type a message..."
-                className="w-full rounded-lg border border-cyan-500/20 bg-gray-900/50 py-2 px-4 text-gray-300 placeholder-gray-500 focus:border-cyan-500/40 focus:outline-none focus:ring-1 focus:ring-cyan-500/40 transition-all duration-300"
+                className="w-full rounded-lg border border-gray-300 bg-gray-100 py-1 px-4 text-gray-900 duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:border-gray-700 dark:bg-gray-600 dark:text-gray-200"
                 value={query}
                 onChange={(e) => handleQuery(e.target.value)}
               />
               <button
                 type="submit"
-                className="flex items-center justify-center rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 p-2 text-cyan-400 hover:text-cyan-300 transition-all duration-300 group"
+                className="ml-2 flex items-center rounded-lg bg-cyan-500 py-1 px-2 text-white duration-150 ease-in-out hover:bg-cyan-600 dark:bg-cyan-500 dark:hover:bg-cyan-600"
               >
-                <ChipIcon className="h-6 w-6 group-hover:scale-110 transition-transform duration-300" />
+                <Image
+                  src="/images/logo.svg"
+                  className="inline h-6 w-6"
+                  height={500}
+                  width={500}
+                  alt="ChatGPT"
+                />
               </button>
             </form>
           </div>
