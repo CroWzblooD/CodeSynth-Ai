@@ -23,8 +23,14 @@ import {
   ChatIcon,
   PlusIcon,
 } from "@heroicons/react/solid";
+import DrawingCanvas from './DrawingCanvas';
 
-export default function CodeEditor() {
+interface CodeEditorProps {
+  showDrawing: boolean;
+  setShowDrawing: (show: boolean) => void;
+}
+
+export default function CodeEditor({ showDrawing, setShowDrawing }: CodeEditorProps) {
   const [value, setValue] = useLocalStorage(
     "CODE",
     "console.log('Hello World')"
@@ -38,6 +44,7 @@ export default function CodeEditor() {
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [translate, setTranslate] = useState(false);
   const [selectedCodeForChat, setSelectedCodeForChat] = useState("");
+  const [pattern, setPattern] = useState("cross");
 
   // Runner function
   function handleRunCode() {
@@ -501,17 +508,21 @@ export default function CodeEditor() {
         )}
       </div>
       
-      <div className={`col-span-2 ${translate ? 'block' : 'hidden'}`}>
-        <ChatGPT
-          translate={translate}
-          setTranslate={setTranslate}
-          selectedCode={selectedCode}
-          onApplyCode={handleApplyCode}
-          selectionRange={selectionRange}
-          selectedCodeForChat={selectedCodeForChat}
-          setSelectedCodeForChat={setSelectedCodeForChat}
-          onClose={handleChatClose}
-        />
+      <div className="col-span-2">
+        {translate ? (
+          <ChatGPT
+            translate={translate}
+            setTranslate={setTranslate}
+            selectedCode={selectedCode}
+            onApplyCode={handleApplyCode}
+            selectionRange={selectionRange}
+            selectedCodeForChat={selectedCodeForChat}
+            setSelectedCodeForChat={setSelectedCodeForChat}
+            onClose={handleChatClose}
+          />
+        ) : (
+          <DrawingCanvas isVisible={!translate} pattern={pattern} />
+        )}
       </div>
     </section>
   );

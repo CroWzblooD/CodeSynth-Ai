@@ -14,15 +14,28 @@ import {
   CodeIcon,
   ChipIcon,
   PencilAltIcon,
+  PencilIcon,
 } from "@heroicons/react/solid";
 
-const Navbar = (props: {
+interface NavbarProps {
   pattern: string;
   patternBG: () => void;
   menuHandler: () => void;
   fontInitializer: () => void;
   toggleDrawing: () => void;
-}) => {
+  setShowDrawing: (show: boolean) => void;
+  showDrawing: boolean;
+}
+
+const Navbar = ({
+  pattern,
+  patternBG,
+  menuHandler,
+  fontInitializer,
+  toggleDrawing,
+  setShowDrawing,
+  showDrawing
+}: NavbarProps) => {
   const { data: session, status } = useSession();
   const { systemTheme, theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -61,9 +74,9 @@ const Navbar = (props: {
   };
 
   const patternSelector = () => {
-    if (props.pattern == "cross") {
+    if (pattern == "cross") {
       return <PlusIcon className="h-5 w-5" />;
-    } else if (props.pattern == "dots") {
+    } else if (pattern == "dots") {
       return <DotsHorizontalIcon className="h-5 w-5" />;
     } else {
       return <ViewGridIcon className="h-5 w-5" />;
@@ -119,12 +132,12 @@ const Navbar = (props: {
           {[
             {
               icon: patternSelector(),
-              onClick: props.patternBG,
+              onClick: patternBG,
               tooltip: "Change Pattern"
             },
             {
               icon: <CodeIcon className="h-5 w-5" />,
-              onClick: props.fontInitializer,
+              onClick: fontInitializer,
               tooltip: "Change Font"
             },
             {
@@ -136,13 +149,13 @@ const Navbar = (props: {
                 alt="AI"
               />,
               onClick: () => {
-                props.menuHandler();
+                menuHandler();
               },
               tooltip: "AI Assistant"
             },
             {
-              icon: <PencilAltIcon className="h-5 w-5" />,
-              onClick: props.toggleDrawing,
+              icon: <PencilIcon className="h-5 w-5" />,
+              onClick: () => setShowDrawing(!showDrawing),
               tooltip: "Drawing Canvas"
             }
           ].map((item, index) => (

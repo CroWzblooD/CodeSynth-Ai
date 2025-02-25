@@ -69,14 +69,10 @@ const Home: NextPage = () => {
           patternBG={patternBG}
           menuHandler={menuHandler}
           fontInitializer={fontInitializer}
-          toggleDrawing={() => setShowDrawing(prev => !prev)}
+          toggleDrawing={() => setShowDrawing(!showDrawing)}
+          setShowDrawing={setShowDrawing}
+          showDrawing={showDrawing}
         />
-        <button
-          className="absolute bottom-4 right-4 z-20 rounded-2xl bg-gptDark p-2 text-white shadow-lg  duration-150 hover:bg-gptDarker"
-          onClick={() => menuHandler()}
-        >
-          <ChatIcon className="h-12 w-12" />
-        </button>
         <Chat 
           translate={translate} 
           setTranslate={setTranslate}
@@ -88,7 +84,7 @@ const Home: NextPage = () => {
         />
         <div className="min-h-[calc(100vh-3.6rem)] overflow-hidden bg-gradient-to-b  from-gray-100 to-gray-200 duration-150 dark:from-gray-800 dark:to-gray-900 sm:max-h-[calc(100vh-3.6rem)] ">
           <div className={patternStyles()}></div>
-          <Editor />
+          <Editor showDrawing={showDrawing} setShowDrawing={setShowDrawing} />
         </div>
       </div>
     </main>
