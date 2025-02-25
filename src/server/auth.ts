@@ -10,6 +10,7 @@ import GoogleProvider from "next-auth/providers/google";
 
 // import {firestore} from "~/server/db"
 import { env } from "../env.mjs";
+import { z } from "zod";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -37,22 +38,27 @@ declare module "next-auth" {
  *
  * @see https://next-auth.js.org/configuration/options
  */
+const server = z.object({
+  NEXTAUTH_SECRET: z.string(),
+  // ... other config
+});
+
 export const authOptions: NextAuthOptions = {
   secret: env.NEXTAUTH_SECRET,
   providers: [
-    ...(env.DISCORD_CLIENT_ID && env.DISCORD_CLIENT_SECRET ? [
-      DiscordProvider({
-        clientId: env.DISCORD_CLIENT_ID,
-        clientSecret: env.DISCORD_CLIENT_SECRET,
-      })
-    ] : []),
-    ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET ? [
-      GoogleProvider({
-        clientId: env.GOOGLE_CLIENT_ID,
-        clientSecret: env.GOOGLE_CLIENT_SECRET,
-      })
-    ] : []),
-  ],
+    ...(env.DISCORD_CLIENT_ID && env.DISCORD_CLIENT_SECRET 
+      ? [DiscordProvider({
+          clientId: env.DISCORD_CLIENT_ID,
+          clientSecret: env.DISCORD_CLIENT_SECRET,
+        })]
+      : []),
+    ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET 
+      ? [GoogleProvider({
+          clientId: env.GOOGLE_CLIENT_ID,
+          clientSecret: env.GOOGLE_CLIENT_SECRET,
+        })]
+      : []),
+  ].filter(Boolean),
   pages: {
     signIn: '/auth/signin',
     error: '/auth/error',

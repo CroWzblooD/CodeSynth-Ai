@@ -10,10 +10,21 @@ import Typewriter from "typewriter-effect";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { XIcon } from "@heroicons/react/solid";
 
-// Initialize Gemini with null check
-const genAI = env.NEXT_PUBLIC_GEMINI_API_KEY 
-  ? new GoogleGenerativeAI(env.NEXT_PUBLIC_GEMINI_API_KEY)
-  : null;
+// Fix: Add proper initialization check and error handling
+const initializeGenAI = () => {
+  if (!env.NEXT_PUBLIC_GEMINI_API_KEY) {
+    console.warn('Gemini API key not found');
+    return null;
+  }
+  try {
+    return new GoogleGenerativeAI(env.NEXT_PUBLIC_GEMINI_API_KEY);
+  } catch (error) {
+    console.error('Failed to initialize Gemini:', error);
+    return null;
+  }
+};
+
+const genAI = initializeGenAI();
 
 // type Roles = "user" | "assistant" | "system";
 interface ChatGPTProps {
